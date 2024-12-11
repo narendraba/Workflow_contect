@@ -1,0 +1,36 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set environment-specific variables and deploy
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "Deploying to production"
+            ENVIRONMENT="production"
+            SERVER_URL="https://api.example.com"
+          elif [[ "${{ github.ref_name }}" == "develop" ]]; then
+            echo "Deploying to staging"
+            ENVIRONMENT="staging"
+            SERVER_URL="https://staging-api.example.com"
+          else
+            echo "Branch not recognized. Exiting..."
+            exit 1
+          fi
+
+          # Display the environment-specific variables
+          echo "Environment: $ENVIRONMENT"
+          echo "Server URL: $SERVER_URL"
+
+          #Display global variable 
+          echo "Using Global variable: ${{vars.VERSION}}"
